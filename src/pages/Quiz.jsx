@@ -11,8 +11,7 @@ const Quiz = () => {
   const [answered, setAnswered] = useState(false);
   const navigate = useNavigate();
    
-  //-----> Fetch Questions <-----
-  // Fetch quiz questions from the backend
+  // Fetch Questions from the backend
   useEffect(() => {
     const fetchQuestions = async () => {
       const res = await fetch('http://localhost:5005/api/quiz');
@@ -24,8 +23,7 @@ const Quiz = () => {
     fetchQuestions();
   }, []);
 
-  //-----> Timer Logic <-----
-  // Handle the countdown timer
+  // Timer Logic
   useEffect(() => {
     if (results || answered) return;
 
@@ -37,12 +35,7 @@ const Quiz = () => {
     }
   }, [timeLeft, results, answered]);
 
-
-  //-----> Handle Option Click <-----
-  // Handle the option click event
-  // Update the selected option and move to the next question
-  // If the question is answered, prevent further clicks
-  // After a delay, move to the next question
+  // Handle Option Click
   const handleOptionClick = (index) => {
     if (answered) return;
 
@@ -56,8 +49,8 @@ const Quiz = () => {
       setAnswered(false);
     }, 1500);
   };
-//-----> Next Question <-----
-  // Move to the next question or submit the quiz if it's the last question
+
+  // Move to the Next Question
   const nextQuestion = () => {
     if (currentIdx + 1 < questions.length) {
       setCurrentIdx(prev => prev + 1);
@@ -67,66 +60,53 @@ const Quiz = () => {
     }
   };
 
-  //-----> Submit Quiz <-----
-  // Submit the quiz answers to the backend
-  // Prepare the answers in the required format
+  // Submit the Quiz
   const submitQuiz = async () => {
     const answers = questions.map((q, i) => ({
       questionId: q._id,
       selectedOptionIndex: selectedOptions[i]
     }));
-    // Send the answers to the backend
     const res = await fetch('http://localhost:5005/api/quiz/submit', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ answers })
     });
  
-    // Handle the response
     const data = await res.json();
     setResults(data);
   };
-  //-----> Render Quiz <-----
-  // Render the quiz UI
-  // If there are no questions, show a loading message
-  // If the quiz is completed, show the results
-  // Otherwise, show the current question and options
-  // Display the question number and time left
+
+  // Logout function
+  const handleLogout = () => {
+    localStorage.removeItem("token");  // Remove token from localStorage
+    navigate("/login");  // Redirect to login page
+  };
+
   if (!questions.length) return <p>Loading...</p>;
 
   if (results) {
     return (
       <div className="quiz-container">
-        <h2>Quiz Completed!</h2>
+        <h2> Quiz Completed!</h2>
         <p className="score-text">Your Score: {results.score} / {results.total}</p>
 
         <div className="result-buttons">
           <button onClick={() => window.location.reload()}>Retest</button>
           <button onClick={() => navigate('/home')}>Go to Home</button>
+          <button onClick={handleLogout}>Logout</button> {/* Logout Button */}
         </div>
       </div>
     );
   }
 
-  // 👇 Only define currentQ after checking for results
-  // This prevents errors when the quiz is completed
-  // and currentQ is accessed before it's defined
   // Get the current question based on the current index
   const currentQ = questions[currentIdx];
 
   return (
-    // Display the question number and time left
     <div className="quiz-container">
       <div className="question-header">
         <span>Question {currentIdx + 1} / {questions.length}</span>
         <span>⏱️ {timeLeft}s</span>
-      </div>
-      Display the progress bar
-      <div className="progress-bar-container">
-        <div
-          className="progress-bar"
-          style={{ width: `${((currentIdx + 1) / questions.length) * 100}%` }}
-        />
       </div>
 
       <p className="question-text">{currentQ.question}</p>
@@ -154,6 +134,7 @@ const Quiz = () => {
           );
         })}
       </ul>
+
     </div>
   );
 };

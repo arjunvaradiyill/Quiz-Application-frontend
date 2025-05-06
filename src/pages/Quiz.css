@@ -1,7 +1,7 @@
 /* General Styling */
 body {
     background-color: #000000;
-    color: #ffffff;
+    color: #f4aeae;
     font-family: 'Segoe UI', sans-serif;
     margin: 0;
     padding: 0;
@@ -153,5 +153,19 @@ body {
     .option {
       font-size: 1rem;
     }
+  }
+  .logout-btn {
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    margin-left: 10px;
+    border-radius: 5px;
+  }
+  
+  .logout-btn:hover {
+    background-color: #ff1a1a;
   }
   
